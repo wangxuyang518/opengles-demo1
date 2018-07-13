@@ -8,44 +8,27 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
-import javax.microedition.khronos.opengles.GL10;
-
 public class Triangle {
-
-
     private Context context;
     private static final String TAG = "Triangle";
 
-    // 正方形
     private static final float[] TRIANGLE_VERTEX_COORD = {
             -0.3f,  -0.3f ,1.0f, 0.5f, 0.0f,   // top
             0.3f, 0.3f , 0.0f, 0.6f, 0.0f,  // bottom left
             -0.3f, 0.3f,0.4f, 0.7f, 1.0f,// Triangle 1
-
-
-       /*     //LINES
-            -0.5f,  0f ,
-            0.5f,  0f ,
-            //point
-            0f,0.25f,
-            0f,-0.25f*/
+            -0.3f,  -0.3f ,1.0f, 0.5f, 0.0f,   // top
+            0.3f,  -0.3f ,1.0f, 0.5f, 0.0f,   // top
+            0.3f, 0.3f , 0.0f, 0.6f, 0.0f,  // bottom left
     };
-
-
 
     private FloatBuffer mTriangleCoordBuffer;
 
-
-
     private int mVertexShader, mFragmentShader;
-
     private static final String POSITION_NAME = "vPosition";
     private static final String COLOR_NAME = "vColor";
     private static final String COLOR_NAME1 = "a_Color";
     private static final String POINT_SIZE = "point_size";
-
-    private int mPositionLocation, mFragColorLocation,mPOINT_SIZE;
-
+    private int mPositionLocation, mFragColorLocation,mPOINT_SIZE,mP;
     public Triangle(Context context) {this.context = context;
 
         // 数组转化为buffer，提高opengles性能
@@ -66,7 +49,7 @@ public class Triangle {
         // 找到对应变量的index
         mPositionLocation = GLES20.glGetAttribLocation(program, POSITION_NAME);
         mFragColorLocation = GLES20.glGetAttribLocation(program, COLOR_NAME1);
-        mPOINT_SIZE=GLES20.glGetAttribLocation(program, POINT_SIZE);
+        mP=GLES20.glGetUniformLocation(program,"matrixl");
     }
 
     private int getShader(int type, String source) {
@@ -90,7 +73,8 @@ public class Triangle {
         return shader;
     }
 
-    public void draw(GL10 gl) {
+    public void draw(float[]fl ) {
+        GLES20.glUniformMatrix4fv(mP,1,false,fl,0);
         GLES20.glEnableVertexAttribArray(mPositionLocation);//顶点属性位置值作为参数，启用顶点属性；顶点属性默认是禁用的
         GLES20.glEnableVertexAttribArray(mFragColorLocation);//顶点属性位置值作为参数，启用顶点属性；顶点属性默认是禁用的
         //读取缓存的数据，产生图元，
@@ -110,8 +94,7 @@ public class Triangle {
                 5*4,
                 mTriangleCoordBuffer);
 
-        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 3);
-
+        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 6);
         GLES20.glDisableVertexAttribArray(mPositionLocation);
         GLES20.glDisableVertexAttribArray(mFragColorLocation);
     }

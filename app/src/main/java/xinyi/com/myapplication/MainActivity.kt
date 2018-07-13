@@ -10,11 +10,10 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        //mGLSurfaceView.setEGLContextClientVersion(2)
-        mGLSurfaceView.setEGLContextClientVersion(2)
+        mGLSurfaceView.setEGLContextClientVersion(2)//设置gl 2.0 api
         mGLSurfaceView.setRenderer(MyRender(this))
         mGLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY)
-
     }
+
+
 }
