@@ -13,12 +13,12 @@ public class Triangle {
     private static final String TAG = "Triangle";
 
     private static final float[] TRIANGLE_VERTEX_COORD = {
-            -0.3f,  -0.3f ,1.0f, 0.5f, 0.0f,   // top
-            0.3f, 0.3f , 0.0f, 0.6f, 0.0f,  // bottom left
-            -0.3f, 0.3f,0.4f, 0.7f, 1.0f,// Triangle 1
-            -0.3f,  -0.3f ,1.0f, 0.5f, 0.0f,   // top
-            0.3f,  -0.3f ,1.0f, 0.5f, 0.0f,   // top
-            0.3f, 0.3f , 0.0f, 0.6f, 0.0f,  // bottom left
+            -0.4f,  -0.5f ,1.0f, 0.5f, 0.0f,   // top
+            0.4f, 0.5f , 0.0f, 0.6f, 0.0f,  // bottom left
+            -0.4f, 0.5f,0.4f, 0.7f, 1.0f,// Triangle 1
+            -0.4f,  -0.5f ,1.0f, 0.5f, 0.0f,   // top
+            0.4f,  -0.5f ,1.0f, 0.5f, 0.0f,   // top
+            0.4f, 0.5f , 0.0f, 0.6f, 0.0f,  // bottom left
     };
 
     private FloatBuffer mTriangleCoordBuffer;
@@ -74,6 +74,7 @@ public class Triangle {
     }
 
     public void draw(float[]fl ) {
+
         GLES20.glUniformMatrix4fv(mP,1,false,fl,0);
         GLES20.glEnableVertexAttribArray(mPositionLocation);//顶点属性位置值作为参数，启用顶点属性；顶点属性默认是禁用的
         GLES20.glEnableVertexAttribArray(mFragColorLocation);//顶点属性位置值作为参数，启用顶点属性；顶点属性默认是禁用的
