@@ -1,6 +1,8 @@
 package xinyi.com.myapplication;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
@@ -17,6 +19,11 @@ public class MyRender implements GLSurfaceView.Renderer {
     private float[]models=new float[16];//4 * 4 矩阵
 
     private float[]mvp=new float[16];//4 * 4 矩阵
+
+    private float[]rote=new float[16];//4 * 4 矩阵
+    private float[]mProjectMatrix=new float[16];//4 * 4 矩阵mViewMatrix
+
+    private float[]mViewMatrix=new float[16];//4 * 4 矩阵
     public MyRender(Context context) {
         this.context = context;
     }
@@ -30,17 +37,28 @@ public class MyRender implements GLSurfaceView.Renderer {
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
         GLES20.glViewport(0, 0, width, height);//视图显示区域
-        int screenNum = context.getResources().getConfiguration().orientation;
-
-        Matrix.setIdentityM(models,0);//models 产生一个单位矩阵
-        Matrix.rotateM(models,0,30f,1f,0f,0f);//旋转
-        Matrix.translateM(models,0,0,0,-5);//移动
-
-        float w=(float)width/(float) (height+72);
-        Matrix.perspectiveM(vs,0,60,w,2f, 10f);//得到透视矩阵
-        Matrix.multiplyMM(mvp, 0, vs, 0, models, 0);//俩个矩阵相乘
-
-      //  Matrix.rotateM(mvp,0,-60f,1f,0f,0f);
+        Bitmap mBitmap=BitmapFactory.decodeResource(context.getResources(),R.mipmap.ic_launcher);
+        int w=mBitmap.getWidth();
+        int h=mBitmap.getHeight();
+        float sWH=w/(float)h;
+        float sWidthHeight=width/(float)height;
+        if(width>height){
+            if(sWH>sWidthHeight){
+                Matrix.orthoM(mProjectMatrix, 0, -sWidthHeight*sWH,sWidthHeight*sWH, -1,1, 3, 7);
+            }else{
+                Matrix.orthoM(mProjectMatrix, 0, -sWidthHeight/sWH,sWidthHeight/sWH, -1,1, 3, 7);
+            }
+        }else{
+            if(sWH>sWidthHeight){
+                Matrix.orthoM(mProjectMatrix, 0, -1, 1, -1/sWidthHeight*sWH, 1/sWidthHeight*sWH,3, 7);
+            }else{
+                Matrix.orthoM(mProjectMatrix, 0, -1, 1, -sWH/sWidthHeight, sWH/sWidthHeight,3, 7);
+            }
+        }
+        //设置相机位置
+        Matrix.setLookAtM(mViewMatrix, 0, 0, 0, 4.0f, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
+        //计算变换矩阵
+        Matrix.multiplyMM(mvp,0,mProjectMatrix,0,mViewMatrix,0);
     }
 
     @Override
