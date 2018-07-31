@@ -13,14 +13,23 @@ public class Triangle {
     private static final String TAG = "Triangle";
 
     private static final float[] TRIANGLE_VERTEX_COORD = {
-             -0.5f, 0.5f, 0.25f, 0.25f  // top
-              - 0.5f, -0.5f, 0.25f, 0.75f,
-              0.5f, 0.5f, 0.75f, 0.75f,
-              0.5f, -0.5f, 0.75f, 0.25f,
+             /*-0.5f, -0.5f, 0.25f, 0.75f,  // top
+               0.5f, -0.5f, 0.75f, 0.75f,
+              -0.5f, 0.5f, 0.25f, 0.25f,
+              0.5f,  0.5f, 0.75f, 0.25f,*/
          /*   -0.5f, 0.5f,
             -0.5f, -0.5f,
             0.5f, 0.5f,
             0.5f, -0.5f,*/
+            /*-0.5f, -0.5f,0.25f, 0.75f,
+            0.5f, -0.5f,0.75f, 0.75f,
+            0.5f,  0.5f,0.75f, 0.25f,
+            -0.5f, 0.5f,0.25f, 0.25f,*/
+            //X  Y  S  T
+            -0.5f, -0.5f,0.2f, 0.2f,
+            0.5f, -0.5f,0.8f, 0.2f,
+            0.5f,  0.5f,0.8f, 0.8f,
+            -0.5f, 0.5f,0.2f, 0.8f,
     };
 
     private FloatBuffer mTriangleCoordBuffer;
@@ -40,7 +49,6 @@ public class Triangle {
                 .order(ByteOrder.nativeOrder()).asFloatBuffer();
         mTriangleCoordBuffer.put(TRIANGLE_VERTEX_COORD);
         // 设置从第一位开始读
-        mTriangleCoordBuffer.position(0);
         // 创建一个为空的顶点shader对象，与String绑定，然后编译返回Shader的引用
         mVertexShader = getShader(GLES20.GL_VERTEX_SHADER, TextResourceReader.readTextFileFromResource(context, R.raw.sample));
         //创建一个为空的片段shader对象，与String绑定，然后编译返回Shader的引用
@@ -81,24 +89,27 @@ public class Triangle {
 
         // GLES20.glUniformMatrix4fv(mP,1,false,fl,0)
         GLES20.glEnableVertexAttribArray(mPositionLocation);//顶点属性位置值作为参数，启用顶点属性；顶点属性默认是禁==
+        mTriangleCoordBuffer.position(0);
+        GLES20.glVertexAttribPointer(
+                mPositionLocation, //属性的位置
+                2,//每个顶点的分量
+                GLES20.GL_FLOAT,//顶点的数据类型float 或者int
+                false,
+                16,
+                mTriangleCoordBuffer);
+        mTriangleCoordBuffer.position(2);
+
         GLES20.glEnableVertexAttribArray(vMCoordinate);//顶点属性位置值作为参数，启用顶点属性；顶点属性默认是禁用的
-        GLES20.glUniform1f(vTexture, TextureHelper.loadTexture(context, R.mipmap.ic_launcher, true));
+        GLES20.glUniform1f(vTexture, TextureHelper.loadTexture(context, R.mipmap.ic_launcher, true));//图片纹理
         GLES20.glVertexAttribPointer(
-                mPositionLocation, //属性的位置
+                vMCoordinate, //属性的位置
                 2,//每个顶点的分量
                 GLES20.GL_FLOAT,//顶点的数据类型float 或者int
                 false,
                 16,
                 mTriangleCoordBuffer);
-        GLES20.glVertexAttribPointer(
-                mPositionLocation, //属性的位置
-                2,//每个顶点的分量
-                GLES20.GL_FLOAT,//顶点的数据类型float 或者int
-                false,
-                16,
-                mTriangleCoordBuffer);
-        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
+        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, 0, 4);
         GLES20.glDisableVertexAttribArray(mPositionLocation);
-        GLES20.glDisableVertexAttribArray(mFragColorLocation);
+        GLES20.glDisableVertexAttribArray(vMCoordinate);
     }
 }
